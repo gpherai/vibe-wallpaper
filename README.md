@@ -1,104 +1,119 @@
-# Vibe
+# Vibe - Linux Desktop Aesthetic Manager
 
-Vibe is een lichte Linux wallpaper manager met quotes.  
-De app draait als daemon op de achtergrond en is aan te sturen via een CLI en een Tauri GUI.
+Vibe is a modular, lightweight Linux wallpaper manager built with Rust. It automatically fetches beautiful wallpapers and inspiring quotes, composites them together with a sleek drop-shadow effect, and sets the result as your desktop background.
 
-## Onderdelen
+It is designed with a decoupled architecture, meaning the background service (Daemon), the Command-Line Interface (CLI), and the Graphical User Interface (GUI) operate independently and communicate seamlessly via D-Bus.
 
-- `vibe-core`: gedeelde logica (providers, compositing, desktop integratie, configuratie)
-- `vibe-daemon`: achtergrondproces met D-Bus service (`org.vibe.Daemon`)
-- `vibe-cli`: command-line client voor daemonbediening
-- `gui` (`vibe-gui`): Tauri desktop interface
+## Features
 
-## Vereisten
+- **Wallpaper Providers:** Reddit (e.g., EarthPorn), Unsplash, Google Earth View.
+- **Quote Providers:** ZenQuotes API (built-in, no key required), Local Text Files.
+- **Smart Compositing:** Automatically converts images and applies quotes with readable typography and soft drop-shadows. Falls back to system fonts (`fc-match`) automatically.
+- **D-Bus Integration:** Control the background daemon instantly via CLI or GUI.
+- **Modern GUI:** Built with Tauri v2, Vite, TypeScript, and modern CSS (`oklch` relative colors) for a sleek, native-feeling dashboard.
+- **Wayland & X11 Support:** Uses `ashpd` (XDG Desktop Portals) for broad compatibility across modern Linux desktop environments like GNOME and KDE.
 
-Rust toolchain + Linux desktop dependencies (Tauri/GTK):
+## Project Structure
 
+- `core/` (`vibe-core`): Shared business logic, provider traits, image compositing, and XDG desktop integration.
+- `daemon/` (`vibe-daemon`): The background service managing the fetch-and-set cycle and exposing the `org.vibe.Daemon` D-Bus interface.
+- `cli/` (`vibe-cli`): A fast command-line client to control the daemon.
+- `gui/` (`vibe-gui`): A Tauri-based dashboard to manage configuration and control rotation.
+
+---
+
+## Prerequisites
+
+You need the Rust toolchain, Node.js/npm, and Linux desktop development dependencies (for Tauri and GTK).
+
+**Ubuntu / Debian:**
 ```bash
+sudo apt update
 sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
-# Fedora:
-# sudo dnf install webkit2gtk4.1-devel cairo-devel pango-devel atk-devel gdk-pixbuf2-devel
 ```
 
-## Bouwen
-
-Vanuit project root:
-
+**Fedora:**
 ```bash
-cargo build --release
+sudo dnf install webkit2gtk4.1-devel cairo-devel pango-devel atk-devel gdk-pixbuf2-devel
 ```
 
-Optioneel binaries installeren in `~/.local/bin`:
+---
 
-```bash
-cargo install --path daemon --root ~/.local
-cargo install --path cli --root ~/.local
-```
+## Getting Started
 
-## Starten
+Because Vibe uses a decoupled architecture, you must run the **Daemon** to handle the heavy lifting, while you can use the **GUI** or **CLI** to control it.
 
-Daemon:
+### 1. Start the Daemon
+
+The daemon must be running in the background for the CLI and GUI to work properly. From the project root, open a terminal and run:
 
 ```bash
 cargo run --bin vibe-daemon
 ```
 
-GUI (development):
+### 2. Launch the GUI (Dashboard)
+
+In a **separate terminal**, navigate to the `gui` folder and start the Tauri development server:
 
 ```bash
 cd gui
 npm install
 npm run tauri dev
 ```
+*The GUI will automatically connect to the daemon, allowing you to configure intervals, choose providers, and skip/pause wallpapers.*
 
-## CLI gebruik
+### 3. Using the CLI
+
+You can also control the daemon directly from your terminal using the CLI:
 
 ```bash
 cargo run --bin vibe-cli -- status
 cargo run --bin vibe-cli -- next
 cargo run --bin vibe-cli -- pause
 cargo run --bin vibe-cli -- resume
-cargo run --bin vibe-cli -- reload-config
+cargo run --bin vibe-cli -- reload
 ```
 
-## Configuratie
+---
 
-Configbestand:
+## Configuration
 
-```text
-~/.config/vibe/config.toml
-```
+Vibe stores its configuration at `~/.config/vibe/config.toml`. The GUI will manage this file for you, but you can also edit it manually.
 
-Voorbeeld:
+Example `config.toml`:
 
 ```toml
 wallpaper_interval_mins = 60
 quote_interval_mins = 60
 subreddit = "EarthPorn"
-provider_type = "reddit"      # reddit | unsplash | earthview
-unsplash_access_key = ""      # verplicht bij provider_type = "unsplash"
+provider_type = "earthview"      # reddit | unsplash | earthview
+unsplash_access_key = ""         # required if provider_type = "unsplash"
 unsplash_query = "nature,wallpapers"
-quote_provider_type = "zenquotes"  # zenquotes | localfile
-quote_local_path = ""
+quote_provider_type = "zenquotes" # zenquotes | localfile
+quote_local_path = ""             # required if quote_provider_type = "localfile"
 is_paused = false
 ```
 
-Na handmatige wijziging van `config.toml`:
-
+If you modify the file manually while the daemon is running, apply the changes via the CLI:
 ```bash
-cargo run --bin vibe-cli -- reload-config
+cargo run --bin vibe-cli -- reload
 ```
 
-De GUI gebruikt dezelfde config en kan die ook direct opslaan/herladen.
+---
 
-## systemd user service (optioneel)
+## Systemd User Service (Optional)
 
-Er staat een voorbeeldservice in `daemon/vibe.service`.  
-Installeer eerst `vibe-daemon` naar `~/.local/bin`, kopieer daarna de service naar `~/.config/systemd/user/` en activeer hem:
+For permanent installation, you can set Vibe to start automatically on login.
 
-```bash
-mkdir -p ~/.config/systemd/user
-cp daemon/vibe.service ~/.config/systemd/user/vibe.service
-systemctl --user daemon-reload
-systemctl --user enable --now vibe.service
-```
+1. Build and install the binaries:
+   ```bash
+   cargo install --path daemon --root ~/.local
+   cargo install --path cli --root ~/.local
+   ```
+2. Set up the systemd service:
+   ```bash
+   mkdir -p ~/.config/systemd/user
+   cp daemon/vibe.service ~/.config/systemd/user/vibe.service
+   systemctl --user daemon-reload
+   systemctl --user enable --now vibe.service
+   ```
