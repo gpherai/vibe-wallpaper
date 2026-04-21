@@ -5944,6 +5944,7 @@ name = "vibe-daemon"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "directories",
  "env_logger",
  "log",
  "tokio",

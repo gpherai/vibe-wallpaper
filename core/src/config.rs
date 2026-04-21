@@ -12,6 +12,8 @@ pub enum WallpaperProviderType {
     Reddit,
     Unsplash,
     EarthView,
+    Bing,
+    Wallhaven,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]

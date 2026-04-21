@@ -21,6 +21,8 @@ enum Commands {
     Reload,
     /// Get current status
     Status,
+    /// Save current wallpaper as favorite
+    Favorite,
 }
 
 #[tokio::main]
@@ -50,6 +52,10 @@ async fn main() -> anyhow::Result<()> {
         Commands::Status => {
             let status = proxy.status().await?;
             println!("Status: {}", status);
+        }
+        Commands::Favorite => {
+            proxy.favorite().await?;
+            println!("Saved current wallpaper to favorites.");
         }
     }
 

@@ -9,7 +9,7 @@ use vibe_core::compositor::Compositor;
 use vibe_core::config::{AppConfig, QuoteProviderType, WallpaperProviderType};
 use vibe_core::desktop::get_current_desktop;
 use vibe_core::providers::quote::{LocalFileQuoteProvider, ZenQuotesProvider};
-use vibe_core::providers::wallpaper::{EarthViewProvider, RedditProvider, UnsplashProvider};
+use vibe_core::providers::wallpaper::{EarthViewProvider, RedditProvider, UnsplashProvider, BingProvider, WallhavenProvider};
 use vibe_core::providers::{QuoteProvider, WallpaperProvider};
 
 fn get_wallpaper_provider(
@@ -47,6 +47,14 @@ fn get_wallpaper_provider(
             info!("Daemon: Initializing Google Earth View provider");
             Ok(Box::new(EarthViewProvider::new()))
         }
+        WallpaperProviderType::Bing => {
+            info!("Daemon: Initializing Bing provider");
+            Ok(Box::new(BingProvider))
+        }
+        WallpaperProviderType::Wallhaven => {
+            info!("Daemon: Initializing Wallhaven provider");
+            Ok(Box::new(WallhavenProvider))
+        }
     }
 }
 
@@ -76,6 +84,7 @@ enum Command {
     Pause,
     Resume,
     ReloadConfig,
+    Favorite,
 }
 
 struct VibeServer {
@@ -162,6 +171,11 @@ impl VibeServer {
         } else {
             Ok("Running".to_string())
         }
+    }
+
+    async fn favorite(&self) -> zbus::fdo::Result<()> {
+        info!("IPC: Received FAVORITE command");
+        self.send_command(Command::Favorite).await
     }
 }
 
@@ -277,6 +291,10 @@ async fn main() -> anyhow::Result<()> {
                                 Some(Command::Next) => should_fetch = true,
                                 Some(Command::Pause) => should_fetch = false,
                                 Some(Command::Resume) => should_fetch = true,
+                                Some(Command::Favorite) => {
+                                    save_favorite(&output_dir);
+                                    continue;
+                                }
                                 Some(Command::ReloadConfig) => {
                                     cached_quote = None;
                                     last_quote_refresh = None;
@@ -326,6 +344,10 @@ async fn main() -> anyhow::Result<()> {
                         info!("Event: RESUME command received.");
                         should_fetch = true;
                     }
+                    Some(Command::Favorite) => {
+                        info!("Event: FAVORITE command received.");
+                        save_favorite(&output_dir);
+                    }
                     Some(Command::ReloadConfig) => {
                         info!("Event: RELOAD_CONFIG command received.");
                         cached_quote = None;
@@ -340,6 +362,27 @@ async fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+fn save_favorite(output_dir: &std::path::Path) {
+    if let Ok(entries) = std::fs::read_dir(output_dir) {
+        if let Some(entry) = entries.filter_map(Result::ok).find(|e| e.path().extension().and_then(|e| e.to_str()) == Some("jpg")) {
+            if let Some(dirs) = directories::UserDirs::new() {
+                let favorites_dir = dirs.picture_dir().unwrap_or_else(|| dirs.home_dir()).join("VibeFavorites");
+                if let Err(e) = std::fs::create_dir_all(&favorites_dir) {
+                    error!("Failed to create favorites directory: {}", e);
+                    return;
+                }
+                
+                let target_path = favorites_dir.join(entry.file_name());
+                if let Err(e) = std::fs::copy(entry.path(), &target_path) {
+                    error!("Failed to copy favorite wallpaper: {}", e);
+                } else {
+                    info!("Saved favorite to {:?}", target_path);
+                }
+            }
+        }
+    }
 }
 
 async fn run_cycle(

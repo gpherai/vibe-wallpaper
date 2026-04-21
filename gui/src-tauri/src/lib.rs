@@ -78,6 +78,21 @@ async fn get_status() -> Result<String, String> {
 }
 
 #[tauri::command]
+async fn favorite_wallpaper() -> Result<(), String> {
+    let conn = Connection::session()
+        .await
+        .map_err(|e| format!("Failed to open D-Bus session connection: {}", e))?;
+    let proxy = VibeControlProxy::new(&conn)
+        .await
+        .map_err(|e| format!("Failed to create daemon proxy: {}", e))?;
+    proxy
+        .favorite()
+        .await
+        .map_err(|e| format!("Daemon Communication Error: {}", e))?;
+    Ok(())
+}
+
+#[tauri::command]
 fn get_config() -> Result<AppConfig, String> {
     AppConfig::load_strict().map_err(|e| e.to_string())
 }
@@ -99,6 +114,7 @@ pub fn run() {
             resume_wallpaper,
             reload_config,
             get_status,
+            favorite_wallpaper,
             get_config,
             save_config
         ])

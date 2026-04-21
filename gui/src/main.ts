@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 const HIDDEN_CLASS = "is-hidden";
 
 let statusIndicator: HTMLElement | null;
+let btnFavorite: HTMLButtonElement | null;
 let btnNext: HTMLButtonElement | null;
 let btnPause: HTMLButtonElement | null;
 let btnResume: HTMLButtonElement | null;
@@ -24,7 +25,7 @@ interface AppConfig {
   wallpaper_interval_mins: number;
   quote_interval_mins: number;
   subreddit: string;
-  provider_type: "reddit" | "unsplash" | "earthview";
+  provider_type: "reddit" | "unsplash" | "earthview" | "bing" | "wallhaven";
   unsplash_access_key: string | null;
   unsplash_query: string | null;
   quote_provider_type: "zenquotes" | "localfile";
@@ -62,7 +63,7 @@ function parseMinutes(value: string, fallback: number): number {
 }
 
 function setControlsDisabled(disabled: boolean) {
-  [btnNext, btnPause, btnResume].forEach(btn => {
+  [btnFavorite, btnNext, btnPause, btnResume].forEach(btn => {
     if (btn) btn.disabled = disabled;
   });
 }
@@ -227,8 +228,19 @@ async function resumeWallpaper() {
   }
 }
 
+async function favoriteWallpaper() {
+  try {
+    await invoke("favorite_wallpaper");
+    showFeedback("Wallpaper saved to favorites!", "success");
+  } catch (error) {
+    console.error(error);
+    showFeedback("Failed to save favorite.", "error");
+  }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   statusIndicator = document.getElementById("status-indicator");
+  btnFavorite = document.getElementById("btn-favorite") as HTMLButtonElement;
   btnNext = document.getElementById("btn-next") as HTMLButtonElement;
   btnPause = document.getElementById("btn-pause") as HTMLButtonElement;
   btnResume = document.getElementById("btn-resume") as HTMLButtonElement;
@@ -246,6 +258,7 @@ window.addEventListener("DOMContentLoaded", () => {
   inputQuotePath = document.getElementById("quote-path") as HTMLInputElement;
   formFeedback = document.getElementById("form-feedback");
 
+  if (btnFavorite) btnFavorite.addEventListener("click", favoriteWallpaper);
   if (btnNext) btnNext.addEventListener("click", nextWallpaper);
   if (btnPause) btnPause.addEventListener("click", pauseWallpaper);
   if (btnResume) btnResume.addEventListener("click", resumeWallpaper);

@@ -281,6 +281,65 @@ impl WallpaperProvider for EarthViewProvider {
     }
 }
 
+pub struct BingProvider;
+
+#[derive(Deserialize)]
+struct BingResponse {
+    images: Vec<BingImage>,
+}
+
+#[derive(Deserialize)]
+struct BingImage {
+    url: String,
+}
+
+#[async_trait::async_trait]
+impl WallpaperProvider for BingProvider {
+    async fn fetch_wallpaper(&self) -> crate::Result<Vec<u8>> {
+        let url = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US";
+        info!("Bing: Fetching daily wallpaper");
+
+        let client = reqwest::Client::new();
+        let response = client.get(url).send().await?.error_for_status()?;
+        let bing_resp: BingResponse = response.json().await?;
+        
+        let img_path = bing_resp.images.first().context("No images found in Bing response")?.url.clone();
+        let image_url = format!("https://www.bing.com{}", img_path);
+        
+        let image_response = client.get(&image_url).send().await?.error_for_status()?;
+        Ok(image_response.bytes().await?.to_vec())
+    }
+}
+
+pub struct WallhavenProvider;
+
+#[derive(Deserialize)]
+struct WallhavenResponse {
+    data: Vec<WallhavenImage>,
+}
+
+#[derive(Deserialize)]
+struct WallhavenImage {
+    path: String,
+}
+
+#[async_trait::async_trait]
+impl WallpaperProvider for WallhavenProvider {
+    async fn fetch_wallpaper(&self) -> crate::Result<Vec<u8>> {
+        let url = "https://wallhaven.cc/api/v1/search?sorting=random";
+        info!("Wallhaven: Fetching random wallpaper");
+
+        let client = reqwest::Client::new();
+        let response = client.get(url).send().await?.error_for_status()?;
+        let wall_resp: WallhavenResponse = response.json().await?;
+        
+        let image_url = wall_resp.data.first().context("No images found in Wallhaven response")?.path.clone();
+        
+        let image_response = client.get(&image_url).send().await?.error_for_status()?;
+        Ok(image_response.bytes().await?.to_vec())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::UnsplashProvider;
