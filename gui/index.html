@@ -2,6 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vibe Configuration</title>
@@ -19,7 +22,9 @@
           <div id="status-indicator" class="status loading">Fetching...</div>
           
           <div class="controls">
-            <button id="btn-favorite" class="btn success" title="Save to favorites">❤</button>
+            <button id="btn-favorite" class="btn success icon-btn" title="Save to favorites">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </button>
             <button id="btn-next" class="btn primary">Skip to Next</button>
             <button id="btn-pause" class="btn warning">Pause</button>
             <button id="btn-resume" class="btn success is-hidden">Resume</button>

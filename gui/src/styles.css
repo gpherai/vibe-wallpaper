@@ -1,14 +1,17 @@
 :root {
-  --bg-color: oklch(18% 0 0);
-  --card-bg: oklch(22% 0 0);
-  --text-main: oklch(96% 0 0);
-  --text-muted: oklch(70% 0 0);
-  --accent: oklch(75% 0.14 300);
+  /* Vibe UI/UX Pro Max - OLED Dark Mode */
+  --bg-color: oklch(14.6% 0.02 258);     /* Deep dark background */
+  --card-bg: oklch(20.4% 0.03 258);      /* Card surface */
+  --card-bg-hover: oklch(27.8% 0.04 258); /* Card hover */
+  --text-main: oklch(98.3% 0.01 258);    /* High contrast text */
+  --text-muted: oklch(65% 0.02 258);     /* Muted text */
+  --accent: oklch(75% 0.14 300);         /* Purple accent */
   --accent-hover: oklch(65% 0.16 300);
-  --danger: oklch(65% 0.14 15);
-  --success: oklch(80% 0.14 180);
-  --border: oklch(30% 0 0);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --danger: oklch(65% 0.14 15);          /* Danger red */
+  --success: oklch(72.8% 0.18 142);      /* Primary positive / success green */
+  --border: oklch(27.8% 0.04 258);       /* Subtle borders */
+
+  font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -53,6 +56,7 @@ header p {
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 4px 6px oklch(0% 0 0 / 0.3);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .card h2 {
@@ -67,9 +71,10 @@ header p {
   font-weight: 500;
   padding: 0.75rem;
   border-radius: 6px;
-  background: oklch(26% 0 0);
+  background: var(--card-bg-hover);
   margin-bottom: 1.5rem;
   text-align: center;
+  font-family: 'Fira Code', monospace; /* Code/Dashboard feel */
 }
 
 .controls {
@@ -79,27 +84,43 @@ header p {
 }
 
 .btn {
-  background-color: oklch(30% 0 0);
+  background-color: var(--card-bg-hover);
   color: var(--text-main);
   border: 1px solid var(--border);
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-family: 'Fira Sans', sans-serif;
   font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.btn:hover {
-  background-color: oklch(38% 0 0);
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: oklch(from var(--card-bg-hover) calc(l + 0.05) c h);
+  border-color: oklch(from var(--border) calc(l + 0.1) c h);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .btn.primary {
   background-color: var(--accent);
-  color: oklch(0% 0 0);
+  color: oklch(14.6% 0.02 258);
   border: none;
 }
-.btn.primary:hover {
+.btn.primary:hover:not(:disabled) {
   background-color: var(--accent-hover);
 }
 
@@ -108,8 +129,9 @@ header p {
   color: var(--danger);
   border: 1px solid var(--danger);
 }
-.btn.warning:hover {
+.btn.warning:hover:not(:disabled) {
   background-color: oklch(from var(--danger) l c h / 0.1);
+  box-shadow: 0 0 10px oklch(from var(--danger) l c h / 0.2); /* Minimal glow */
 }
 
 .btn.success {
@@ -117,8 +139,13 @@ header p {
   color: var(--success);
   border: 1px solid var(--success);
 }
-.btn.success:hover {
+.btn.success:hover:not(:disabled) {
   background-color: oklch(from var(--success) l c h / 0.1);
+  box-shadow: 0 0 10px oklch(from var(--success) l c h / 0.2); /* Minimal glow */
+}
+
+.icon-btn {
+  padding: 0.6rem; /* Make it more square */
 }
 
 .form-group {
@@ -138,21 +165,28 @@ header p {
 }
 
 .form-group input, .form-group select {
-  background-color: oklch(26% 0 0);
+  background-color: var(--card-bg-hover);
   border: 1px solid var(--border);
   color: var(--text-main);
   padding: 0.75rem;
   border-radius: 6px;
   font-size: 1rem;
+  font-family: 'Fira Code', monospace; /* Monospace for inputs */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-group input:focus, .form-group select:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.form-group input:focus-visible, .form-group select:focus-visible {
+  outline: none;
 }
 
 .form-group input::placeholder {
-  color: oklch(50% 0 0);
+  color: var(--text-muted);
 }
 
 .section-divider {
@@ -173,6 +207,7 @@ header p {
   font-size: 0.9rem;
   text-align: center;
   animation: fadeIn 0.3s ease;
+  font-weight: 500;
 }
 
 .feedback-message.error {
