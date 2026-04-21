@@ -1,0 +1,22 @@
+[package]
+name = "vibe-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { workspace = true }
+serde = { workspace = true }
+reqwest = { workspace = true }
+image = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+async-trait = "0.1.89"
+ashpd = { version = "0.13.9", features = ["wallpaper", "tokio"] }
+imageproc = "0.26.1"
+serde_json = "1.0.149"
+ab_glyph = "0.2.32"
+toml = "1.1.0"
+directories = "6.0.0"
+rand = "0.8"
+zbus = { version = "5.14.0", features = ["tokio"] }

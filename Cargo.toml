@@ -1,0 +1,20 @@
+[workspace]
+members = [
+    "core",
+    "daemon",
+    "cli",
+    "gui/src-tauri"
+]
+resolver = "2"
+
+[workspace.dependencies]
+vibe-core = { path = "core" }
+tokio = { version = "1.36", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+reqwest = { version = "0.12", features = ["json"] }
+image = "0.25"
+clap = { version = "4.5", features = ["derive"] }
+anyhow = "1.0"
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.11"

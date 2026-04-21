@@ -1,0 +1,9 @@
+/target/
+/gui/node_modules/
+/gui/dist/
+.DS_Store
+*.swp
+/cli/test.jpg
+/cli/test_output.jpg
+/test_rgb8.png
+/daemon.log

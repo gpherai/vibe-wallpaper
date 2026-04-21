@@ -1,0 +1,12 @@
+[package]
+name = "vibe-daemon"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+vibe-core = { workspace = true }
+tokio = { workspace = true }
+anyhow = { workspace = true }
+log = { workspace = true }
+env_logger = { workspace = true }
+zbus = { version = "5.14.0", features = ["tokio"] }

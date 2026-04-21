@@ -1,0 +1,13 @@
+[package]
+name = "vibe-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+vibe-core = { workspace = true }
+clap = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+log = { workspace = true }
+env_logger = { workspace = true }
+zbus = { version = "5.14.0", features = ["tokio"] }

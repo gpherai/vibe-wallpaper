@@ -1,0 +1,16 @@
+[Unit]
+Description=Vibe Wallpaper Daemon
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/vibe-daemon
+Restart=on-failure
+RestartSec=5
+# Optioneel: als je wilt loggen naar journald
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=graphical-session.target

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vibe Configuration</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Vibe Dashboard</h1>
+        <p>Manage your desktop aesthetic</p>
+      </header>
+
+      <main>
+        <section class="card status-section">
+          <h2>Daemon Status</h2>
+          <div id="status-indicator" class="status loading">Fetching...</div>
+          
+          <div class="controls">
+            <button id="btn-next" class="btn primary">Skip to Next</button>
+            <button id="btn-pause" class="btn warning">Pause</button>
+            <button id="btn-resume" class="btn success is-hidden">Resume</button>
+          </div>
+        </section>
+
+        <section class="card config-section">
+          <h2>Configuration</h2>
+          <form id="config-form">
+            <div class="form-group">
+              <label for="provider-type">Wallpaper Source</label>
+              <select id="provider-type">
+                <option value="reddit">Reddit</option>
+                <option value="unsplash">Unsplash</option>
+                <option value="earthview">Google Earth View</option>
+              </select>
+            </div>
+            <div class="form-group" id="group-subreddit">
+              <label for="subreddit">Subreddit</label>
+              <input type="text" id="subreddit" value="wallpapers" />
+            </div>
+            <div class="form-group is-hidden" id="group-unsplash">
+              <label for="unsplash-key">Unsplash Access Key</label>
+              <input type="text" id="unsplash-key" placeholder="Your Access Key" />
+              <label class="stacked-label" for="unsplash-query">Keywords (e.g. nature,wallpaper)</label>
+              <input type="text" id="unsplash-query" placeholder="nature,abstract" />
+            </div>
+            <div class="form-group">
+              <label for="wallpaper-interval">Interval (minutes)</label>
+              <input type="number" id="wallpaper-interval" value="60" min="1" />
+            </div>
+
+            <hr class="section-divider" />
+
+            <div class="form-group">
+              <label for="quote-provider-type">Quote Source</label>
+              <select id="quote-provider-type">
+                <option value="zenquotes">ZenQuotes API</option>
+                <option value="localfile">Local Text File</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="quote-interval">Quote Refresh Interval (minutes)</label>
+              <input type="number" id="quote-interval" value="60" min="1" />
+            </div>
+            <div class="form-group is-hidden" id="group-quote-path">
+              <label for="quote-path">Local File Path</label>
+              <input type="text" id="quote-path" placeholder="/home/user/quotes.txt" />
+            </div>
+
+            <button type="submit" id="btn-save" class="btn primary full-width">Save & Reload</button>
+            <div id="form-feedback" class="feedback-message is-hidden"></div>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
