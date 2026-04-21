@@ -17,70 +17,87 @@
       </header>
 
       <main>
-        <section class="card status-section">
-          <h2>Daemon Status</h2>
-          <div id="status-indicator" class="status loading">Fetching...</div>
-          
-          <div class="controls">
-            <button id="btn-favorite" class="btn success icon-btn" title="Save to favorites">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-            </button>
-            <button id="btn-next" class="btn primary">Skip to Next</button>
-            <button id="btn-pause" class="btn warning">Pause</button>
-            <button id="btn-resume" class="btn success is-hidden">Resume</button>
+        <nav class="tabs" role="tablist">
+          <button type="button" role="tab" aria-selected="true" aria-controls="tab-status" id="nav-status" class="tab-btn active">Dashboard</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="tab-wallpaper" id="nav-wallpaper" class="tab-btn">Wallpaper</button>
+          <button type="button" role="tab" aria-selected="false" aria-controls="tab-quotes" id="nav-quotes" class="tab-btn">Quotes</button>
+        </nav>
+
+        <div id="tab-status" class="tab-content active" role="tabpanel" aria-labelledby="nav-status">
+          <section class="card status-section">
+            <h2>Daemon Status</h2>
+            <div id="status-indicator" class="status loading">Fetching...</div>
+            
+            <div class="controls">
+              <button id="btn-favorite" class="btn success icon-btn" title="Save to favorites">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              </button>
+              <button id="btn-next" class="btn primary">Skip to Next</button>
+              <button id="btn-pause" class="btn warning">Pause</button>
+              <button id="btn-resume" class="btn success is-hidden">Resume</button>
+            </div>
+          </section>
+        </div>
+
+        <form id="config-form">
+          <div id="tab-wallpaper" class="tab-content" role="tabpanel" aria-labelledby="nav-wallpaper">
+            <section class="card config-section">
+              <h2>Wallpaper Settings</h2>
+              <div class="form-group">
+                <label for="provider-type">Wallpaper Source</label>
+                <select id="provider-type">
+                  <option value="reddit">Reddit</option>
+                  <option value="unsplash">Unsplash</option>
+                  <option value="earthview">Google Earth View</option>
+                  <option value="bing">Bing Wallpaper of the Day</option>
+                  <option value="wallhaven">Wallhaven (Random)</option>
+                </select>
+              </div>
+              <div class="form-group" id="group-subreddit">
+                <label for="subreddit">Subreddit</label>
+                <input type="text" id="subreddit" value="wallpapers" />
+              </div>
+              <div class="form-group is-hidden" id="group-unsplash">
+                <label for="unsplash-key">Unsplash Access Key</label>
+                <input type="text" id="unsplash-key" placeholder="Your Access Key" />
+                <label class="stacked-label" for="unsplash-query">Keywords (e.g. nature,wallpaper)</label>
+                <input type="text" id="unsplash-query" placeholder="nature,abstract" />
+              </div>
+              <div class="form-group">
+                <label for="wallpaper-interval">Interval (minutes)</label>
+                <input type="number" id="wallpaper-interval" value="60" min="1" />
+              </div>
+
+              <button type="submit" class="btn primary full-width">Save & Reload</button>
+            </section>
           </div>
-        </section>
 
-        <section class="card config-section">
-          <h2>Configuration</h2>
-          <form id="config-form">
-            <div class="form-group">
-              <label for="provider-type">Wallpaper Source</label>
-              <select id="provider-type">
-                <option value="reddit">Reddit</option>
-                <option value="unsplash">Unsplash</option>
-                <option value="earthview">Google Earth View</option>
-                <option value="bing">Bing Wallpaper of the Day</option>
-                <option value="wallhaven">Wallhaven (Random)</option>
-              </select>
-            </div>
-            <div class="form-group" id="group-subreddit">
-              <label for="subreddit">Subreddit</label>
-              <input type="text" id="subreddit" value="wallpapers" />
-            </div>
-            <div class="form-group is-hidden" id="group-unsplash">
-              <label for="unsplash-key">Unsplash Access Key</label>
-              <input type="text" id="unsplash-key" placeholder="Your Access Key" />
-              <label class="stacked-label" for="unsplash-query">Keywords (e.g. nature,wallpaper)</label>
-              <input type="text" id="unsplash-query" placeholder="nature,abstract" />
-            </div>
-            <div class="form-group">
-              <label for="wallpaper-interval">Interval (minutes)</label>
-              <input type="number" id="wallpaper-interval" value="60" min="1" />
-            </div>
+          <div id="tab-quotes" class="tab-content" role="tabpanel" aria-labelledby="nav-quotes">
+            <section class="card config-section">
+              <h2>Quote Settings</h2>
+              <div class="form-group">
+                <label for="quote-provider-type">Quote Source</label>
+                <select id="quote-provider-type">
+                  <option value="zenquotes">ZenQuotes API</option>
+                  <option value="localfile">Local Text File</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="quote-interval">Quote Refresh Interval (minutes)</label>
+                <input type="number" id="quote-interval" value="60" min="1" />
+              </div>
+              <div class="form-group is-hidden" id="group-quote-path">
+                <label for="quote-path">Local File Path</label>
+                <input type="text" id="quote-path" placeholder="/home/user/quotes.txt" />
+              </div>
 
-            <hr class="section-divider" />
+              <button type="submit" class="btn primary full-width">Save & Reload</button>
+            </section>
+          </div>
+          
+          <div id="form-feedback" class="feedback-message is-hidden"></div>
+        </form>
 
-            <div class="form-group">
-              <label for="quote-provider-type">Quote Source</label>
-              <select id="quote-provider-type">
-                <option value="zenquotes">ZenQuotes API</option>
-                <option value="localfile">Local Text File</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="quote-interval">Quote Refresh Interval (minutes)</label>
-              <input type="number" id="quote-interval" value="60" min="1" />
-            </div>
-            <div class="form-group is-hidden" id="group-quote-path">
-              <label for="quote-path">Local File Path</label>
-              <input type="text" id="quote-path" placeholder="/home/user/quotes.txt" />
-            </div>
-
-            <button type="submit" id="btn-save" class="btn primary full-width">Save & Reload</button>
-            <div id="form-feedback" class="feedback-message is-hidden"></div>
-          </form>
-        </section>
       </main>
     </div>
 
